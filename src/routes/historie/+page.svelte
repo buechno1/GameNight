@@ -78,7 +78,7 @@
 
 		<!-- Verlauf -->
 		<div class="col-12 col-lg-8">
-			<input class="form-control glass mb-3" placeholder="🔎 Verlauf durchsuchen (Spiel, Gewinner, Notiz)" bind:value={filter} />
+			<input class="form-control gn-search mb-3" placeholder="🔎 Verlauf durchsuchen (Spiel, Gewinner, Notiz)" bind:value={filter} />
 
 			{#if shown.length === 0}
 				<p class="opacity-75">Keine Einträge gefunden.</p>
@@ -121,6 +121,22 @@
 {/if}
 
 <style>
+	.gn-search {
+		background-color: rgba(255, 255, 255, 0.12);
+		border: 1px solid rgba(255, 255, 255, 0.28);
+		border-radius: 0.8rem;
+		color: #fff;
+		padding: 0.7rem 1rem;
+	}
+	.gn-search::placeholder {
+		color: rgba(255, 255, 255, 0.65);
+	}
+	.gn-search:focus {
+		background-color: rgba(255, 255, 255, 0.18);
+		border-color: #ffc857;
+		box-shadow: 0 0 0 0.2rem rgba(255, 200, 87, 0.25);
+		color: #fff;
+	}
 	.gn-bar {
 		height: 8px;
 		border-radius: 99px;

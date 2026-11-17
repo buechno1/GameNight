@@ -4,6 +4,7 @@
 // Die Anleitungen sind in eigenen Worten zusammengefasst und ersetzen keine Original-Spielregeln.
 
 import { MongoClient } from 'mongodb';
+import { extraGames } from './games-extra.mjs';
 
 if (!process.env.DB_URI) {
 	console.error('DB_URI fehlt. Starte das Skript mit: node --env-file=.env scripts/seed.mjs');
@@ -125,8 +126,15 @@ const rounds = [
 	['Exploding Kittens', 'Ben', 'gut', '', 7],
 	['Catan', 'Clara', 'super', 'Revanche war fällig.', 5],
 	['Dobble', 'Dario', 'schlecht', 'Zu hektisch für Grossmutter.', 3],
-	['Mario Kart', 'Anna', 'super', 'Finale am Abend.', 1]
+	['Mario Kart', 'Anna', 'super', 'Finale am Abend.', 1],
+	['Qwixx', 'Ben', 'gut', 'Schnell und trotzdem spannend.', 14],
+	['Jass (Schieber)', 'Clara', 'super', 'Knappes Ende im letzten Stich.', 9],
+	['Werwolf', 'Dario', 'super', 'Die ganze Gruppe war dabei.', 6],
+	['Schach', 'Anna', 'gut', 'Lange, aber faire Partie.', 4],
+	['Das verrückte Labyrinth', 'Ben', 'super', 'Auch die Kinder hatten Spass.', 2]
 ];
+
+const allGames = [...games, ...extraGames];
 
 const client = new MongoClient(process.env.DB_URI);
 
@@ -138,13 +146,13 @@ try {
 	if (removed.deletedCount) console.log(`Aufgeräumt: ${removed.deletedCount} erfundene Spiele einer früheren Version entfernt.`);
 
 	let added = 0;
-	for (const game of games) {
+	for (const game of allGames) {
 		const res = await db
 			.collection('games')
 			.updateOne({ title: game.title }, { $set: game, $setOnInsert: { createdAt: new Date() } }, { upsert: true });
 		if (res.upsertedCount) added++;
 	}
-	console.log(`Spiele: ${added} neu angelegt, ${games.length - added} aktualisiert.`);
+	console.log(`Spiele: ${added} neu angelegt, ${allGames.length - added} aktualisiert.`);
 
 	await db.collection('rounds').deleteMany({ userId: 'seed' });
 	const docs = [];

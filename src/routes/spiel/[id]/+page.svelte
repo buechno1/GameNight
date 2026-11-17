@@ -84,10 +84,14 @@
 						{#each sections as s}
 							<section class="mb-3">
 								{#if s.title}<h3 class="h6 text-uppercase gn-sec">{s.title}</h3>{/if}
-								{#if s.numbered}
+								{#if s.kind === 'steps'}
 									<ol class="gn-ol">
 										{#each s.lines as line}<li>{line}</li>{/each}
 									</ol>
+								{:else if s.kind === 'bullets'}
+									<ul class="gn-ul">
+										{#each s.lines as line}<li>{line}</li>{/each}
+									</ul>
 								{:else}
 									{#each s.lines as line}<p class="mb-1">{line}</p>{/each}
 								{/if}
@@ -217,6 +221,23 @@
 	.gn-sec {
 		color: #ffc857;
 		letter-spacing: 0.06em;
+	}
+	.gn-ul {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+	}
+	.gn-ul li {
+		position: relative;
+		padding-left: 1.4rem;
+		margin-bottom: 0.4rem;
+	}
+	.gn-ul li::before {
+		content: '•';
+		position: absolute;
+		left: 0.25rem;
+		color: #ffc857;
+		font-weight: 700;
 	}
 	.gn-ol {
 		list-style: none;

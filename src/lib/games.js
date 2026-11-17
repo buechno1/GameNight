@@ -14,7 +14,9 @@ const EMOJIS = [
 	['quiz', '❓'],
 	['abenteuer', '🗺️'],
 	['kinder', '🧸'],
-	['lege', '🧱']
+	['lege', '🧱'],
+	['geschick', '🏗️'],
+	['wort', '🔤']
 ];
 
 /** Emoji passend zum Genre (Fallback: Würfel). */
@@ -44,7 +46,9 @@ const ART = [
 	['raetsel', 'raetsel'],
 	['quiz', 'quiz'],
 	['abenteuer', 'abenteuer'],
-	['lege', 'legespiel']
+	['lege', 'legespiel'],
+	['geschick', 'geschicklichkeit'],
+	['wort', 'wortspiel']
 ];
 
 /** Bild eines Spiels: eigenes Bild (image) oder die Genre-Illustration. */
@@ -55,7 +59,15 @@ export function imageFor(game) {
 	return `/genres/${slug}.svg`;
 }
 
-/** Anleitung (Text mit «Abschnitt:»-Zeilen und «1. …»-Schritten) in Abschnitte zerlegen. */
+// Abschnitte, die als Fliesstext (ohne Nummern oder Punkte) angezeigt werden
+const PLAIN = ['spielende', 'tipp', 'hinweis', 'ziel'];
+// Abschnitte, die als Aufzählung mit Punkten angezeigt werden
+const BULLETS = ['wertung'];
+
+/**
+ * Anleitung (Text mit «Abschnitt:»-Zeilen) in Abschnitte zerlegen.
+ * kind: 'steps' = nummerierte Schritte, 'bullets' = Aufzählung, 'text' = Fliesstext
+ */
 export function parseRules(text = '') {
 	return text
 		.trim()
@@ -64,12 +76,16 @@ export function parseRules(text = '') {
 		.map((block) => {
 			const lines = block.split('\n').map((l) => l.trim()).filter(Boolean);
 			const title = lines[0]?.endsWith(':') ? lines.shift().slice(0, -1) : '';
-			const numbered = lines.length > 0 && lines.every((l) => /^\d+\.\s/.test(l));
-			return {
-				title,
-				numbered,
-				lines: numbered ? lines.map((l) => l.replace(/^\d+\.\s*/, '')) : lines
-			};
+			const key = title.toLowerCase();
+			const allNumbered = lines.length > 0 && lines.every((l) => /^\d+\.\s/.test(l));
+			const kind = BULLETS.includes(key)
+				? 'bullets'
+				: PLAIN.includes(key)
+					? 'text'
+					: allNumbered
+						? 'steps'
+						: 'text';
+			return { title, kind, lines: lines.map((l) => l.replace(/^\d+\.\s*/, '')) };
 		});
 }
 
