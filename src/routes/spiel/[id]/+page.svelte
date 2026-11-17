@@ -1,6 +1,6 @@
 <script>
 	import { enhance } from '$app/forms';
-	import { emojiFor, hueFor, imageFor, parseRules, RATINGS } from '#lib/games.js';
+	import { emojiFor, hueFor, imageCandidates, nextImage, parseRules, RATINGS } from '#lib/games.js';
 
 	let { data, form } = $props();
 
@@ -34,14 +34,7 @@
 
 <div class="glass overflow-hidden" style="--hue:{hueFor(g.genre || g.title)}">
 	<div class="gn-banner">
-		<img
-			src={imageFor(g)}
-			alt={g.title}
-			onerror={(e) => {
-				e.currentTarget.onerror = null;
-				e.currentTarget.src = imageFor({ genre: g.genre });
-			}}
-		/>
+		<img src={imageCandidates(g)[0]} alt={g.title} onerror={(e) => nextImage(e, g)} />
 		<div class="gn-banner-title">
 			<span class="gn-emoji">{emojiFor(g.genre)}</span>
 			<h1 class="h2 mb-0 ms-2">{g.title}</h1>

@@ -51,12 +51,61 @@ const ART = [
 	['wort', 'wortspiel']
 ];
 
-/** Bild eines Spiels: eigenes Bild (image) oder die Genre-Illustration. */
+/** Genre-Illustration (Fallback, wenn kein eigenes Bild vorhanden ist). */
 export function imageFor(game) {
-	if (game?.image) return game.image;
 	const g = (game?.genre ?? '').toLowerCase();
 	const slug = ART.find(([key]) => g.includes(key))?.[1] ?? 'standard';
 	return `/genres/${slug}.svg`;
+}
+
+/**
+ * Alle möglichen Bild-Adressen eines Spiels, in der Reihenfolge, in der sie ausprobiert werden:
+ * 1. das Feld «image» (falls in der Datenbank gesetzt)
+ * 2. static/games/<spielname>.png oder .jpg (Kleinbuchstaben, Leerzeichen als _ oder -)
+ * 3. die Genre-Illustration
+ * Beispiel: «6 nimmt!» -> /games/6_nimmt.png oder /games/6-nimmt.png
+ */
+export function imageCandidates(game) {
+	const list = [];
+	if (game?.image) list.push(game.image);
+
+	const title = (game?.title ?? '')
+		.toLowerCase()
+		.replace(/[!?.,:;'"()«»]/g, '')
+		.trim()
+		.replace(/\s+/g, ' ');
+
+	if (title) {
+		const translit = title
+			.replace(/ä/g, 'ae')
+			.replace(/ö/g, 'oe')
+			.replace(/ü/g, 'ue')
+			.replace(/ß/g, 'ss');
+		const names = [...new Set([title, translit])];
+		for (const ext of ['png', 'jpg']) {
+			for (const sep of ['_', '-']) {
+				for (const name of names) {
+					list.push(`/games/${encodeURIComponent(name.replace(/ /g, sep))}.${ext}`);
+				}
+			}
+		}
+	}
+
+	list.push(imageFor(game));
+	return [...new Set(list)];
+}
+
+/** onerror-Handler für <img>: probiert die nächste Bild-Adresse aus der Liste. */
+export function nextImage(event, game) {
+	const img = event.currentTarget;
+	const list = imageCandidates(game);
+	const next = Number(img.dataset.i ?? 0) + 1;
+	if (next < list.length) {
+		img.dataset.i = String(next);
+		img.src = list[next];
+	} else {
+		img.onerror = null;
+	}
 }
 
 // Abschnitte, die als Fliesstext (ohne Nummern oder Punkte) angezeigt werden

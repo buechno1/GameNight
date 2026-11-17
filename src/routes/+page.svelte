@@ -1,6 +1,6 @@
 <script>
 	import { enhance } from '$app/forms';
-	import { emojiFor, hueFor, imageFor, ratingFromAvg } from '#lib/games.js';
+	import { emojiFor, hueFor, imageCandidates, nextImage, ratingFromAvg } from '#lib/games.js';
 
 	let { data, form } = $props();
 
@@ -98,7 +98,7 @@
 		</div>
 		<div class="col-12">
 			<label class="form-label" for="img-{g?.id ?? 'new'}">Bild (optional)</label>
-			<input class="form-control" id="img-{g?.id ?? 'new'}" name="image" placeholder="https://… oder /games/bild.jpg – leer = Genre-Illustration" value={g?.image ?? ''} />
+			<input class="form-control" id="img-{g?.id ?? 'new'}" name="image" placeholder="leer lassen = automatisch static/games/<spielname>.png" value={g?.image ?? ''} />
 		</div>
 		<div class="col-12">
 			<label class="form-label" for="desc-{g?.id ?? 'new'}">Beschreibung</label>
@@ -219,13 +219,10 @@
 				<article class="glass gn-card h-100 overflow-hidden d-flex flex-column" style="--hue:{hueFor(g.genre || g.title)}">
 					<div class="gn-banner">
 						<img
-							src={imageFor(g)}
+							src={imageCandidates(g)[0]}
 							alt={g.title}
 							loading="lazy"
-							onerror={(e) => {
-								e.currentTarget.onerror = null;
-								e.currentTarget.src = imageFor({ genre: g.genre });
-							}}
+							onerror={(e) => nextImage(e, g)}
 						/>
 						<span class="gn-emoji">{emojiFor(g.genre)}</span>
 					</div>
