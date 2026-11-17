@@ -109,12 +109,17 @@
 
 <style>
 	:global(body) {
-		min-height: 100vh;
-		color: #f3f1ff;
-		background: linear-gradient(135deg, #14112e, #2b1055, #1d2b64, #14112e);
-		background-size: 300% 300%;
-		background-attachment: fixed;
-		animation: gn-shift 28s ease infinite;
+	--bs-body-color: #f3f1ff;
+	--bs-body-color-rgb: 243, 241, 255;
+	--bs-heading-color: #ffffff;
+	--bs-secondary-color: rgba(243, 241, 255, 0.75);
+	--bs-border-color: rgba(255, 255, 255, 0.2);
+	min-height: 100vh;
+	color: #f3f1ff !important;
+	background: linear-gradient(135deg, #14112e, #2b1055, #1d2b64, #14112e);
+	background-size: 300% 300%;
+	background-attachment: fixed;
+	animation: gn-shift 28s ease infinite;
 	}
 	:global(a) {
 		color: #ffc857;
@@ -125,6 +130,7 @@
 
 	/* Glas-Karten */
 	:global(.glass) {
+		color: #f3f1ff;
 		background: rgba(255, 255, 255, 0.08);
 		backdrop-filter: blur(10px);
 		-webkit-backdrop-filter: blur(10px);
@@ -171,6 +177,7 @@
 		animation: gn-roll 6s ease-in-out infinite;
 	}
 	.gn-pill {
+		color: #fff;
 		padding: 0.25rem 0.75rem;
 		border-radius: 999px;
 		background: rgba(255, 255, 255, 0.1);
