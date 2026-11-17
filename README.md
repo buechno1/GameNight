@@ -5,13 +5,13 @@
 | Angabe | Inhalt |
 |---|---|
 | Projekttitel | GameNight-Generator |
-| Verfasser/in | _[Name, Klasse]_ |
+| Verfasser/in | Noah Büchler,  |
 | GitHub-Repository | https://github.com/buechno1/GameNight |
 | Aktuelle App | https://gamenight-pt.netlify.app/ |
-| Getestete Version | _[Link; Commit/Tag – folgt mit der Evaluation]_ |
-| Testzugänge | Registrierung in der App frei möglich (Rolle «Mitglied»). Admin-Testkonto: Benutzername: buechno1, Passwort: Hummel&2004 |
+| Getestete Version | https://gamenight-pt.netlify.app/ (Commit [8df90da](https://github.com/buechno1/GameNight/commit/8df90dac4c0b4ee83dc250fbc9e82de25d130ad1)) |
+| Testzugänge | Registrierung in der App frei möglich (Rolle «Mitglied»). Admin-Testkonto: wird bei der Abgabe auf Moodle mitgeteilt. |
 | Figma / Referenz-Mockup | _[Direkter Link – folgt]_ |
-| Weitere Artefakte [Optional] | [User Journey Map (Bild)](docs/user-journey-map.png), [Skizze vor den Kommentaren](docs/crazy8s-flow-vorher.jpg), [Skizze nach den Kommentaren](docs/skizze-nachher.jpg) |
+| Weitere Artefakte | [User Journey Map (Bild)](docs/user-journey-map.png), [Skizze vor den Kommentaren](docs/crazy8s-flow-vorher.jpg), [Skizze nach den Kommentaren](docs/skizze-nachher.jpg) |
 
 ## Inhaltsverzeichnis
 
@@ -25,10 +25,9 @@
     3. [Decide](#33-decide)
     4. [Prototype](#34-prototype)
     5. [Validate](#35-validate)
-4. [Erweiterungen [Optional]](#4-erweiterungen-optional)
-5. [Projektorganisation [Optional]](#5-projektorganisation-optional)
-6. [KI-Deklaration](#6-ki-deklaration)
-7. [Anhang [Optional]](#7-anhang-optional)
+4. [Erweiterungen](#4-erweiterungen)
+5. [KI-Deklaration](#5-ki-deklaration)
+6. [Anhang](#6-anhang)
 
 ## 1. Ausgangslage
 
@@ -53,8 +52,8 @@ Der **GameNight-Generator** ist eine Web-App, die aus einer Spielesammlung in de
   3. **Spiel beenden:** Gewinner wählen, bewerten (Super / Gut / Schlecht) und eine Notiz speichern.
   4. **Historie & Gewinner:** Rangliste der Gewinner, meistgespielte Spiele und Verlauf aller Runden mit Suchfeld.
   5. **Anmeldung mit Rollen:** Gäste können nur suchen. Mitglieder können zusätzlich Runden, Bewertungen und Notizen speichern. Nur **Administratoren** dürfen Spiele hinzufügen, bearbeiten und löschen. Die Registrierung ist in der App möglich.
-- **Annahmen [Optional]:** Eine Kombination aus harten Filtern und einem Zufallselement hilft der Gruppe, Entscheidungsträgheit zu überwinden. Eine kurze, schrittweise Anleitung reduziert den Erklärungsaufwand, besonders für Personen, die Regeln vergessen haben.
-- **Abgrenzung [Optional]:** Keine Anbindung an externe Spieldatenbanken (z. B. BoardGameGeek), keine Online-Mehrspielerfunktion und keine Verwaltung von Besitz oder Ausleihe der Spiele. Es werden keine Original-Spielschachtel-Bilder verwendet (Urheberrecht).
+- **Annahmen:** Eine Kombination aus harten Filtern und einem Zufallselement hilft der Gruppe, Entscheidungsträgheit zu überwinden. Eine kurze, schrittweise Anleitung reduziert den Erklärungsaufwand, besonders für Personen, die Regeln vergessen haben.
+- **Abgrenzung:** Es erfolgt keine Anbindung an externe Spieldatenbanken (z. B. BoardGameGeek), keine Online-Mehrspielerfunktion und keine Verwaltung von Besitz oder Ausleihe der Spiele. Zudem sind die Spiele physisch nötig, auf der Website selbst lassen sich die Spiele nicht direkt spielen.
 
 ## 3. Vorgehen & Artefakte
 
@@ -185,31 +184,24 @@ Die Durchführung erfolgte phasenbasiert (Understand & Define, Sketch, Decide, P
   5. Beispieldaten (42 Spiele) über ein Seed-Skript eingespielt, damit die App getestet werden kann.
 
   Für Details zum Zusammenspiel von eigener Arbeit und KI siehe Kapitel [6](#6-ki-deklaration).
-- **Struktur & Komponenten:**
+- **Struktur & Komponenten:** Die App besteht aus fünf Seiten, einer gemeinsamen Hilfsbibliothek und einem Skript für die Beispieldaten.
 
-  ```
-  src/
-  ├── hooks.server.js              # liest Sitzungs-Cookie, setzt event.locals.user
-  ├── lib/
-  │   ├── games.js                 # Hilfsfunktionen: Bilder, Spielerzahl, Anleitung parsen, Bewertungen
-  │   └── server/
-  │       ├── db.js                # MongoDB-Verbindung (Datenbank «GameNight»)
-  │       └── auth.js              # Passwort-Hash (scrypt), Sitzungen
-  └── routes/
-      ├── +layout.server.js        # gibt den angemeldeten Benutzer an alle Seiten
-      ├── +layout.svelte           # Navigation, Hintergrund, globale Stile
-      ├── +page.server.js / +page.svelte        # Spielsuche, Zufall, Admin-CRUD (Actions add/update/delete)
-      ├── spiel/[id]/              # Spielablauf, Action «finish» (Runde speichern)
-      ├── historie/                # Rangliste, Statistik, Verlauf (Action deleteRound)
-      ├── login/ · register/       # Anmeldung und Registrierung
-      └── logout/+server.js        # Abmelden (POST)
-  static/
-  ├── genres/*.svg                 # 14 eigene Genre-Illustrationen
-  └── games/                       # Spielbilder (<spielname>.png), automatisch zugeordnet
-  scripts/
-  ├── seed.mjs                     # Beispieldaten einspielen
-  └── games-extra.mjs              # zusätzliche Spiele
-  ```
+  | Datei / Ordner | Aufgabe |
+  |---|---|
+  | `src/routes/+page.svelte` und `+page.server.js` | **Spielsuche** (Startseite): Filter, Zufalls-Generator, Spielkarten. Admin: Spiele hinzufügen, bearbeiten, löschen |
+  | `src/routes/spiel/[id]/` | **Spielablauf**: Spiel starten, Anleitung, Spiel beenden (Gewinner, Bewertung, Notiz speichern) |
+  | `src/routes/historie/` | **Historie & Gewinner**: Rangliste, meistgespielte Spiele, Verlauf |
+  | `src/routes/login/`, `register/`, `logout/` | **Anmeldung**, Registrierung, Abmeldung |
+  | `src/routes/+layout.svelte` und `+layout.server.js` | Navigation, Hintergrund und Stile für alle Seiten. Übergibt den angemeldeten Benutzer |
+  | `src/hooks.server.js` | Liest bei jeder Anfrage das Sitzungs-Cookie und setzt den angemeldeten Benutzer |
+  | `src/lib/games.js` | Hilfsfunktionen: Spielbilder, Spielerzahl-Anzeige, Anleitung aufbereiten, Bewertungen |
+  | `src/lib/server/db.js` | Verbindung zur MongoDB-Datenbank |
+  | `src/lib/server/auth.js` | Passwort-Hash (scrypt) und Sitzungen |
+  | `static/genres/` | 14 eigene Genre-Illustrationen (SVG) |
+  | `static/games/` | Spielbilder (`<spielname>.png`), werden automatisch zugeordnet |
+  | `scripts/seed.mjs`, `games-extra.mjs` | Beispieldaten in die Datenbank einspielen: 42 Spiele und Beispiel-Runden für die Historie |
+
+
 
   Zustand wird mit Svelte-5-Runes (`$state`, `$derived`) verwaltet, Formulare laufen über SvelteKit Form Actions mit `use:enhance`.
 - **Daten & Schnittstellen:** Die Daten liegen in MongoDB Atlas (Datenbank `GameNight`) und werden serverseitig über `load`-Funktionen gelesen und über Form Actions geschrieben. Es gibt keine separate REST-API.
@@ -242,7 +234,7 @@ Die Durchführung erfolgte phasenbasiert (Understand & Define, Sketch, Decide, P
 - **Zusammenfassung der Resultate:** _[folgt]_
 - **Abgeleitete Verbesserungen:** _[folgt]_
 
-## 4. Erweiterungen [Optional]
+## 4. Erweiterungen
 
 > Entwurf: Die folgenden Einträge sind Vorschläge, welche Teile über den Mindestumfang hinausgehen könnten. Screenshots und Codeverweise sind noch zu ergänzen, bei Nichtgebrauch einfach löschen.
 
@@ -272,21 +264,17 @@ Die Durchführung erfolgte phasenbasiert (Understand & Define, Sketch, Decide, P
 - **Nachweise:** _[Screenshot der Spielkarten; Codeverweise ergänzen]_
 - **Bezug zur Evaluation:** Nein.
 
-### 4.2 Weitere Erweiterungen
+
 
 _[folgt, z. B. weitere Methoden oder Planungsartefakte]_
 
-## 5. Projektorganisation [Optional]
 
-- **Repository & Struktur:** Repository-Link siehe [Projektübersicht](#projektübersicht--zugänge). Struktur siehe [3.4.2](#342-umsetzung-technik). Sensible Daten (`.env`, Verbindungs-URI) sind per `.gitignore` ausgeschlossen. Dokumentationsbilder liegen unter `docs/`.
-- **Issue-Management:** _[folgt]_
-- **Commit-Praxis:** _[folgt]_
 
-## 6. KI-Deklaration
+## 5. KI-Deklaration
 
 Im Projekt wurde KI eingesetzt. Die Arbeitsweise ist nachfolgend beschrieben.
 
-### 6.1 KI-Tools
+### 5.1 KI-Tools
 
 - **Eingesetzte Tools:** Claude (Anthropic), im Chat mit Dateizugriff und Codeausführung; Modell: Claude Sonnet 5.5 _[Version prüfen und ggf. anpassen]_.
 - **Zweck & Umfang:**
@@ -296,18 +284,18 @@ Im Projekt wurde KI eingesetzt. Die Arbeitsweise ist nachfolgend beschrieben.
   - **Beratung:** Hilfe beim Projekt-Setup (SvelteKit-Optionen, MongoDB-Anbindung, `.env`, Netlify) und bei Fehlermeldungen.
 - **Eigene Leistung (Abgrenzung):** Ideenfindung, Problemraum, Personas, Skizzen und die Entscheidung für den Ablauf, Einarbeitung der Kommentare, Anforderungen an die App (Rollen, Registrierung, Optik, Bilder, Datenmenge), Einrichtung von Projekt, MongoDB Atlas, GitHub und Netlify, Einfügen und Testen des Codes im Browser, Rückmeldungen und Korrekturwünsche, Bereitstellung der Spielbilder. _[Ergänzen, was du selbst angepasst oder geschrieben hast]_
 
-### 6.2 Vorgehen mit KI
+### 5.2 Vorgehen mit KI
 
 - **Arbeitsablauf & Aufgabenverteilung:** Ich habe Anforderungen und Unterlagen im Chat bereitgestellt. Die KI erzeugte Code und Dokumente, ich fügte sie ins VS-Code-Projekt ein, testete lokal und auf Netlify und meldete Fehler oder Änderungswünsche mit Screenshots zurück. Es wurde in kleinen Schritten iteriert (Updates mit jeweils wenigen geänderten Dateien). Die KI hatte keinen direkten Zugriff auf mein Repository oder meine Datenbank.
 - **Prompt-Vorgehen & Kontext:** Kontext bestand aus meinen Dokumenten (Ideenfindung, PDF-Vorlagen, Anforderungen), Screenshots von Fehlern und der App sowie kurzen Änderungswünschen. Beispiel: «Ich möchte, dass man ohne Anmeldung nur Spiele suchen kann, aber keine Notizen hinzufügen oder Spiele ändern kann.»
 - **Konfiguration & Werkzeuge:** Keine (keine Agenten-Konfiguration oder Kontextdateien im Repository).
-- **Prüfung & Überarbeitung:** Der Code wurde von mir im Browser getestet (Gast, Mitglied, Admin). Fehler (z. B. nicht mehr unterstütztes `$lib`, schlecht lesbarer Text, falsche Darstellung «2–2») wurden gemeldet und korrigiert. Spielregeln und Beschreibungen sind in eigenen Worten formuliert; _[Ich habe die Anleitungen der Spiele mit den Originalregeln verglichen – bestätigen oder anpassen]_. Original-Spielbilder wurden aus Urheberrechtsgründen nicht von der KI erzeugt oder kopiert.
+- **Prüfung & Überarbeitung:** Der Code wurde von mir im Browser getestet (Gast, Mitglied, Admin). Fehler (z. B. nicht mehr unterstütztes `$lib`, schlecht lesbarer Text, falsche Darstellung «2–2») wurden gemeldet und korrigiert. Spielregeln und Beschreibungen sind in eigenen Worten formuliert; Ich habe die Anleitungen der Spiele mit den Originalregeln verglichen. Diese stimmen überein, sind jedoch etwas gekürzt da sonst die ganze Seite zu unübersichtlich werden würde. Original-Spielbilder wurden aus Urheberrechtsgründen nicht von der KI erzeugt oder kopiert.
 
-### 6.3 Reflexion
+### 5.3 Reflexion
 
 _[Nutzen, Grenzen, Risiken/Qualitätssicherung – folgt]_
 
-## 7. Anhang [Optional]
+## 6. Anhang
 
 **Quellen und Lizenzen**
 
@@ -317,9 +305,8 @@ _[Nutzen, Grenzen, Risiken/Qualitätssicherung – folgt]_
 | Bootstrap 5 | https://getbootstrap.com | MIT |
 | MongoDB Node.js Driver | https://www.mongodb.com | Apache 2.0 |
 | Genre-Illustrationen (`static/genres/*.svg`) | Eigene Erstellung (mit KI-Unterstützung) | eigene Arbeit |
-| Spielbilder (`static/games/*.png`) | _[Quelle je Bild angeben, nur Bilder mit erlaubter Nutzung verwenden]_ | _[Lizenz]_ |
+| Spielbilder (`static/games/*.png`) | https://pixabay.com/images/search/ | Pixabay-Lizenz, ohne Namensnennung nutzbar |
 | Spieltitel | Nur als Titel genannt. Die Marken gehören den jeweiligen Rechteinhabern. Beschreibungen und Anleitungen sind in eigenen Worten verfasst. | – |
 | Emoji | Darstellung durch das System des Endgeräts | – |
 
-- **Testskript & Materialien:** _[folgt]_
-- **Rohdaten/Auswertung:** _[folgt]_
+
