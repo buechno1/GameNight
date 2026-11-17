@@ -1,6 +1,6 @@
 <script>
 	import { enhance } from '$app/forms';
-	import { emojiFor, hueFor, RATINGS } from '#lib/games.js';
+	import { emojiFor, hueFor, imageFor, parseRules, RATINGS } from '#lib/games.js';
 
 	let { data, form } = $props();
 
@@ -10,6 +10,7 @@
 	let busy = $state(false);
 
 	const g = $derived(data.game);
+	const sections = $derived(parseRules(g.rules));
 	const steps = ['Spiel wählen', 'Anleitung & Spiel', 'Ergebnis'];
 	const fmt = (iso) =>
 		new Date(iso).toLocaleDateString('de-CH', { day: '2-digit', month: '2-digit', year: 'numeric' });
@@ -33,8 +34,18 @@
 
 <div class="glass overflow-hidden" style="--hue:{hueFor(g.genre || g.title)}">
 	<div class="gn-banner">
-		<span class="gn-emoji">{emojiFor(g.genre)}</span>
-		<h1 class="h2 mb-0 ms-3">{g.title}</h1>
+		<img
+			src={imageFor(g)}
+			alt={g.title}
+			onerror={(e) => {
+				e.currentTarget.onerror = null;
+				e.currentTarget.src = imageFor({ genre: g.genre });
+			}}
+		/>
+		<div class="gn-banner-title">
+			<span class="gn-emoji">{emojiFor(g.genre)}</span>
+			<h1 class="h2 mb-0 ms-2">{g.title}</h1>
+		</div>
 	</div>
 
 	<div class="p-3 p-md-4">
@@ -45,7 +56,7 @@
 					<span class="badge gn-badge">⏱ {g.duration} Min.</span>
 					{#if g.genre}<span class="badge gn-badge">{g.genre}</span>{/if}
 				</div>
-				<p class="mb-4">{g.description || 'Keine Beschreibung vorhanden.'}</p>
+				<p class="mb-4 gn-text">{g.description || 'Keine Beschreibung vorhanden.'}</p>
 
 				{#if data.rounds.length}
 					<h2 class="h6 opacity-75">Letzte Runden</h2>
@@ -68,8 +79,21 @@
 		{:else if step === 2}
 			<div class="gn-fade">
 				<h2 class="h4">📖 Anleitung</h2>
-				{#if g.rules}
-					<div class="gn-rules glass p-3 mb-4">{g.rules}</div>
+				{#if sections.length}
+					<div class="gn-rules glass p-3 p-md-4 mb-4">
+						{#each sections as s}
+							<section class="mb-3">
+								{#if s.title}<h3 class="h6 text-uppercase gn-sec">{s.title}</h3>{/if}
+								{#if s.numbered}
+									<ol class="gn-ol">
+										{#each s.lines as line}<li>{line}</li>{/each}
+									</ol>
+								{:else}
+									{#each s.lines as line}<p class="mb-1">{line}</p>{/each}
+								{/if}
+							</section>
+						{/each}
+					</div>
 				{:else}
 					<p class="opacity-75 mb-4">Für dieses Spiel gibt es noch keine Kurz-Anleitung.</p>
 				{/if}
@@ -157,21 +181,69 @@
 
 <style>
 	.gn-banner {
-		display: flex;
-		align-items: center;
-		padding: 1.2rem 1.5rem;
+		position: relative;
+		height: 200px;
+		overflow: hidden;
 		background: linear-gradient(135deg, hsl(var(--hue) 75% 42%), hsl(calc(var(--hue) + 40) 70% 28%));
 	}
+	.gn-banner img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
+	.gn-banner-title {
+		position: absolute;
+		inset: auto 0 0 0;
+		display: flex;
+		align-items: center;
+		padding: 2.5rem 1.5rem 1rem;
+		background: linear-gradient(to top, rgba(10, 8, 30, 0.85), transparent);
+	}
 	.gn-emoji {
-		font-size: 2.8rem;
+		font-size: 2rem;
+		line-height: 1;
+	}
+	.gn-text {
+		line-height: 1.7;
+		white-space: pre-line;
 	}
 	.gn-badge {
 		background: rgba(255, 255, 255, 0.14);
 		font-weight: 500;
 	}
 	.gn-rules {
-		white-space: pre-line;
 		line-height: 1.7;
+	}
+	.gn-sec {
+		color: #ffc857;
+		letter-spacing: 0.06em;
+	}
+	.gn-ol {
+		list-style: none;
+		counter-reset: step;
+		padding: 0;
+		margin: 0;
+	}
+	.gn-ol li {
+		counter-increment: step;
+		position: relative;
+		padding-left: 2.3rem;
+		margin-bottom: 0.6rem;
+	}
+	.gn-ol li::before {
+		content: counter(step);
+		position: absolute;
+		left: 0;
+		top: 0.1rem;
+		width: 1.6rem;
+		height: 1.6rem;
+		border-radius: 50%;
+		display: grid;
+		place-items: center;
+		font-size: 0.8rem;
+		font-weight: 700;
+		background: #ffc857;
+		color: #2b1055;
 	}
 	.gn-rate {
 		min-width: 7.5rem;

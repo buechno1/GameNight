@@ -34,6 +34,7 @@ export async function load() {
 				maxPlayers: g.maxPlayers,
 				duration: g.duration,
 				genre: g.genre ?? '',
+				image: g.image ?? '',
 				description: g.description ?? '',
 				rules: g.rules ?? '',
 				played: s?.played ?? 0,
@@ -54,7 +55,12 @@ function parseGame(data) {
 	const maxPlayers = Number(data.get('maxPlayers'));
 	const duration = Number(data.get('duration'));
 
+	const image = String(data.get('image') ?? '').trim();
+
 	if (!title) return { error: 'Bitte gib einen Titel ein.' };
+	if (image && !/^(https:\/\/|\/)/.test(image)) {
+		return { error: 'Die Bild-Adresse muss mit https:// oder / beginnen.' };
+	}
 	if (![minPlayers, maxPlayers, duration].every((n) => Number.isFinite(n) && n >= 1)) {
 		return { error: 'Spieleranzahl und Dauer müssen Zahlen ab 1 sein.' };
 	}
@@ -69,6 +75,7 @@ function parseGame(data) {
 			maxPlayers,
 			duration,
 			genre: String(data.get('genre') ?? '').trim(),
+			image,
 			description: String(data.get('description') ?? '').trim(),
 			rules: String(data.get('rules') ?? '').trim()
 		}

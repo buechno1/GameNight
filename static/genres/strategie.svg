@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 300" preserveAspectRatio="xMidYMid slice">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0f5c6e"/><stop offset="1" stop-color="#1b2a6b"/></linearGradient>
+<path id="h" d="M0,-42 L36,-21 L36,21 L0,42 L-36,21 L-36,-21Z"/></defs>
+<rect width="600" height="300" fill="url(#g)"/>
+<g stroke="#ffffff" stroke-opacity=".35" stroke-width="3">
+<use href="#h" x="180" y="110" fill="#3fb8af"/><use href="#h" x="243" y="146" fill="#7ee8fa" fill-opacity=".8"/><use href="#h" x="306" y="110" fill="#ffc857"/>
+<use href="#h" x="369" y="146" fill="#3fb8af"/><use href="#h" x="432" y="110" fill="#ff7eb6" fill-opacity=".85"/><use href="#h" x="243" y="74" fill="#6c7bd9"/>
+<use href="#h" x="369" y="74" fill="#7ee8fa" fill-opacity=".8"/><use href="#h" x="180" y="182" fill="#ffc857" fill-opacity=".9"/><use href="#h" x="306" y="182" fill="#6c7bd9"/>
+<use href="#h" x="432" y="182" fill="#3fb8af"/></g>
+<g><path d="M243 160 l-12 34 h24z" fill="#fff"/><circle cx="243" cy="150" r="10" fill="#fff"/>
+<path d="M432 124 l-12 34 h24z" fill="#ffd9ec"/><circle cx="432" cy="114" r="10" fill="#ffd9ec"/>
+<path d="M306 124 l-12 34 h24z" fill="#1b2a6b"/><circle cx="306" cy="114" r="10" fill="#1b2a6b"/></g>
+<path d="M369 70 v-38 l26 10 l-26 10" fill="#e63946" stroke="#fff" stroke-width="3"/><line x1="369" y1="30" x2="369" y2="78" stroke="#fff" stroke-width="3"/>
+</svg>

@@ -46,6 +46,7 @@ export async function load({ params, locals }) {
 			maxPlayers: game.maxPlayers,
 			duration: game.duration,
 			genre: game.genre ?? '',
+			image: game.image ?? '',
 			description: game.description ?? '',
 			rules: game.rules ?? ''
 		},

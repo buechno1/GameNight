@@ -1,6 +1,6 @@
 <script>
 	import { enhance } from '$app/forms';
-	import { emojiFor, hueFor, ratingFromAvg } from '#lib/games.js';
+	import { emojiFor, hueFor, imageFor, ratingFromAvg } from '#lib/games.js';
 
 	let { data, form } = $props();
 
@@ -97,12 +97,16 @@
 			<input class="form-control" id="genre-{g?.id ?? 'new'}" name="genre" list="genre-list" placeholder="z. B. Strategie, Party, Karten" value={g?.genre ?? ''} />
 		</div>
 		<div class="col-12">
+			<label class="form-label" for="img-{g?.id ?? 'new'}">Bild (optional)</label>
+			<input class="form-control" id="img-{g?.id ?? 'new'}" name="image" placeholder="https://… oder /games/bild.jpg – leer = Genre-Illustration" value={g?.image ?? ''} />
+		</div>
+		<div class="col-12">
 			<label class="form-label" for="desc-{g?.id ?? 'new'}">Beschreibung</label>
-			<textarea class="form-control" id="desc-{g?.id ?? 'new'}" name="description" rows="2" placeholder="Worum geht es in ein bis zwei Sätzen?">{g?.description ?? ''}</textarea>
+			<textarea class="form-control" id="desc-{g?.id ?? 'new'}" name="description" rows="4" placeholder="Worum geht es? Wer spielt mit wem, was macht den Reiz aus?">{g?.description ?? ''}</textarea>
 		</div>
 		<div class="col-12">
 			<label class="form-label" for="rules-{g?.id ?? 'new'}">Kurz-Anleitung</label>
-			<textarea class="form-control" id="rules-{g?.id ?? 'new'}" name="rules" rows="4" placeholder={'Vorbereitung:\n1. ...\n\nAblauf:\n...'}>{g?.rules ?? ''}</textarea>
+			<textarea class="form-control" id="rules-{g?.id ?? 'new'}" name="rules" rows="10" placeholder={'Vorbereitung:\n1. ...\n\nAblauf:\n...'}>{g?.rules ?? ''}</textarea>
 		</div>
 	</div>
 {/snippet}
@@ -213,7 +217,18 @@
 			{@const rating = ratingFromAvg(g.avg)}
 			<div class="col">
 				<article class="glass gn-card h-100 overflow-hidden d-flex flex-column" style="--hue:{hueFor(g.genre || g.title)}">
-					<div class="gn-banner"><span class="gn-emoji">{emojiFor(g.genre)}</span></div>
+					<div class="gn-banner">
+						<img
+							src={imageFor(g)}
+							alt={g.title}
+							loading="lazy"
+							onerror={(e) => {
+								e.currentTarget.onerror = null;
+								e.currentTarget.src = imageFor({ genre: g.genre });
+							}}
+						/>
+						<span class="gn-emoji">{emojiFor(g.genre)}</span>
+					</div>
 
 					{#if editId === g.id}
 						<form class="p-3" method="POST" action="?/update" use:enhance={afterSave}>
@@ -291,17 +306,33 @@
 		box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
 	}
 	.gn-banner {
-		height: 84px;
-		display: grid;
-		place-items: center;
+		position: relative;
+		height: 150px;
+		overflow: hidden;
 		background: linear-gradient(135deg, hsl(var(--hue) 75% 42%), hsl(calc(var(--hue) + 40) 70% 28%));
 	}
+	.gn-banner img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		transition: transform 0.4s ease;
+	}
+	.gn-card:hover .gn-banner img {
+		transform: scale(1.08);
+	}
 	.gn-emoji {
-		font-size: 2.6rem;
+		position: absolute;
+		right: 0.6rem;
+		bottom: 0.5rem;
+		font-size: 1.5rem;
+		line-height: 1;
+		padding: 0.3rem 0.45rem;
+		border-radius: 999px;
+		background: rgba(0, 0, 0, 0.4);
 		transition: transform 0.3s ease;
 	}
 	.gn-card:hover .gn-emoji {
-		transform: scale(1.25) rotate(12deg);
+		transform: scale(1.2) rotate(12deg);
 	}
 	.gn-badge {
 		background: rgba(255, 255, 255, 0.14);
