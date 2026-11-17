@@ -1,6 +1,14 @@
 <script>
 	import { enhance } from '$app/forms';
-	import { emojiFor, hueFor, imageCandidates, nextImage, parseRules, RATINGS } from '#lib/games.js';
+	import {
+		emojiFor,
+		hueFor,
+		imageCandidates,
+		nextImage,
+		parseRules,
+		playersLabel,
+		RATINGS
+	} from '#lib/games.js';
 
 	let { data, form } = $props();
 
@@ -45,7 +53,7 @@
 		{#if step === 1}
 			<div class="gn-fade">
 				<div class="d-flex flex-wrap gap-2 mb-3">
-					<span class="badge gn-badge">👥 {g.minPlayers}–{g.maxPlayers} Spieler</span>
+					<span class="badge gn-badge">👥 {playersLabel(g.minPlayers, g.maxPlayers)} Spieler</span>
 					<span class="badge gn-badge">⏱ {g.duration} Min.</span>
 					{#if g.genre}<span class="badge gn-badge">{g.genre}</span>{/if}
 				</div>

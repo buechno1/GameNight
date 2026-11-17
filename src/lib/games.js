@@ -51,6 +51,11 @@ const ART = [
 	['wort', 'wortspiel']
 ];
 
+/** Spieleranzahl als Text: «2» wenn Minimum und Maximum gleich sind, sonst «2–4». */
+export function playersLabel(min, max) {
+	return min === max ? `${min}` : `${min}–${max}`;
+}
+
 /** Genre-Illustration (Fallback, wenn kein eigenes Bild vorhanden ist). */
 export function imageFor(game) {
 	const g = (game?.genre ?? '').toLowerCase();

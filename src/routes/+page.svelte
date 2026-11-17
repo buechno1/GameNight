@@ -1,6 +1,13 @@
 <script>
 	import { enhance } from '$app/forms';
-	import { emojiFor, hueFor, imageCandidates, nextImage, ratingFromAvg } from '#lib/games.js';
+	import {
+		emojiFor,
+		hueFor,
+		imageCandidates,
+		nextImage,
+		playersLabel,
+		ratingFromAvg
+	} from '#lib/games.js';
 
 	let { data, form } = $props();
 
@@ -170,7 +177,7 @@
 		<h2 class="h2 mb-2">{pick.title}</h2>
 		{#if !spinning}
 			<div class="mb-3 opacity-75">
-				👥 {pick.minPlayers}–{pick.maxPlayers} Spieler · ⏱ {pick.duration} Min.
+				👥 {playersLabel(pick.minPlayers, pick.maxPlayers)} Spieler · ⏱ {pick.duration} Min.
 				{#if pick.genre}· {pick.genre}{/if}
 			</div>
 			<div class="d-flex justify-content-center gap-2 flex-wrap">
@@ -240,7 +247,7 @@
 						<div class="p-3 d-flex flex-column gap-2 flex-grow-1">
 							<h2 class="h5 mb-0">{g.title}</h2>
 							<div class="d-flex flex-wrap gap-2">
-								<span class="badge gn-badge">👥 {g.minPlayers}–{g.maxPlayers}</span>
+								<span class="badge gn-badge">👥 {playersLabel(g.minPlayers, g.maxPlayers)}</span>
 								<span class="badge gn-badge">⏱ {g.duration} Min.</span>
 								{#if g.genre}<span class="badge gn-badge gn-genre">{g.genre}</span>{/if}
 							</div>
